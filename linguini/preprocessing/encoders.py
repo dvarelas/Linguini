@@ -4,6 +4,9 @@ import tensorflow_hub as hub
 
 
 class SentenceEncoder(object):
+    """
+    Abstract class
+    """
     def __init__(self):
         None
 
@@ -15,6 +18,9 @@ class SentenceEncoder(object):
 
 
 class BertEncoder(SentenceEncoder):
+    """
+    Encodes sentences by using the indexer of Bert
+    """
     def __init__(self, model):
         self.bert_layer = hub.KerasLayer(model['name'], trainable=model['trainable'])
         self.tokenizer = tokenization.FullTokenizer(
@@ -22,10 +28,21 @@ class BertEncoder(SentenceEncoder):
         super().__init__()
 
     def fit(self, sentences):
+        """
+        Gets the maximum from the lengths of all the sentences
+        :param sentences: Array of sentences
+        :return: Max length
+        """
         max_len = len(max(sentences.flatten(), key=len)) + 50
         return max_len
 
     def transform(self, sentences):
+        """
+        Transforms sentences by indexing them
+
+        :param sentences: Array of sentences
+        :return: Indexed sentences
+        """
         max_len = self.fit(sentences)
         all_tokens = []
         all_masks = []
@@ -49,6 +66,9 @@ class BertEncoder(SentenceEncoder):
 
 
 class ColumnEncoder(object):
+    """
+    Indexes columns in a pandas dataframe
+    """
     def __init__(self, col_names):
         self.col_names = col_names
 
@@ -56,6 +76,12 @@ class ColumnEncoder(object):
         return None
 
     def transform(self, df):
+        """
+        Indexes columns in a pandas dataframe
+
+        :param df: Pandas dataframe
+        :return:
+        """
         result = []
         for col in self.col_names:
             result.append(df[col + '_indexed'].values)

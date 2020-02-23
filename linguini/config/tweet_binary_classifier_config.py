@@ -5,6 +5,9 @@ from linguini import BASE_PATH
 
 
 class TweetBinaryClassifierConfig(object):
+    """
+    Configuration for the tweet binary classifier application
+    """
     def __init__(self, data_path, test_data_path, target_col, text_col, language, multiprocessing, optimization):
         self.data_path = data_path
         self.test_data_path = test_data_path

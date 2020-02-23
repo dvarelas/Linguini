@@ -1,4 +1,7 @@
 class NLPmodel(object):
+    """
+    Abstract class
+    """
     def __init__(self):
         None
 

@@ -7,6 +7,9 @@ from linguini.utils.callbacks import CyclicLR
 
 
 class BinaryClassifier(object):
+    """
+    Abstract class definition
+    """
     def __init__(self):
         super().__init__()
 
@@ -19,6 +22,9 @@ class BinaryClassifier(object):
 
 
 class MultiLabelClassifier(object):
+    """
+    Abstract class definition
+    """
     def __init__(self):
         super().__init__()
 
@@ -31,6 +37,10 @@ class MultiLabelClassifier(object):
 
 
 class BertBinaryClassifier(BinaryClassifier):
+    """
+    Binary classifier that uses pretrained
+    bert model
+    """
     def __init__(self, optim_setup, bert_layer, max_len):
         self.optim_setup = optim_setup
         self.bert_layer = bert_layer
@@ -39,6 +49,11 @@ class BertBinaryClassifier(BinaryClassifier):
         super().__init__()
 
     def compile(self):
+        """
+        Compiles the tensorflow model
+
+        :return: Tensorflow model
+        """
         input_word_ids = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="input_word_ids")
         input_mask = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="input_mask")
         segment_ids = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="segment_ids")
@@ -61,6 +76,13 @@ class BertBinaryClassifier(BinaryClassifier):
         return model
 
     def fit(self, x, y):
+        """
+        Fits the model
+
+        :param x: Input features
+        :param y: Label to predict
+        :return:
+        """
         clr_exp = CyclicLR(
             mode='exp_range',
             step_size=(int(self.optim_setup['num_epochs']) / 2) * (6090 / int(self.optim_setup['batch_size'])),
@@ -80,18 +102,33 @@ class BertBinaryClassifier(BinaryClassifier):
         return train_history
 
     def save(self):
+        """
+        Saves the trained model as .h5
+        :return:
+        """
         if not os.path.exists(BASE_PATH + 'trained_models/'):
             os.makedirs(BASE_PATH + 'trained_models/')
         self.model.save(BASE_PATH + 'trained_models/bert_model.h5')
 
     @staticmethod
     def score(test_input, model_path):
+        """
+        Scores data using a pretrained_model
+
+        :param test_input:
+        :param model_path:
+        :return:
+        """
         import tensorflow_hub as hub
         model = tf.keras.models.load_model(model_path, custom_objects={'KerasLayer': hub.KerasLayer})
         return model.predict(test_input)
 
 
 class BertPlusBinaryClassifier(BertBinaryClassifier):
+    """
+    Binary classifier that uses pretrained
+    bert model and side features
+    """
     def __init__(self, optim_setup, bert_layer, max_len):
         super().__init__(optim_setup, bert_layer, max_len)
         self.model = self.compile()
@@ -101,8 +138,8 @@ class BertPlusBinaryClassifier(BertBinaryClassifier):
         This method creates an embeddings layer for each item feature in the feature lookup
         dict
 
-        :param feature_lookup: Dict of two dicts. Contains values and dimensionality of feature
-        :param layer_name: String. The name of the layer
+        :param n_items: Number of items
+        :param dim: Dimensionality of the latent space
         :param trainable: Boolean. If embeddings should be trainable
         :return: Embedding Layer
         """
@@ -114,6 +151,11 @@ class BertPlusBinaryClassifier(BertBinaryClassifier):
         return emb_layer
 
     def compile(self):
+        """
+        Compiles the tensorflow model
+
+        :return:
+        """
         input_word_ids = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="input_word_ids")
         input_mask = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="input_mask")
         segment_ids = tf.keras.layers.Input(shape=(self.max_len,), dtype=tf.int32, name="segment_ids")
