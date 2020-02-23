@@ -1,0 +1,11 @@
+venv/
+.idea
+data/
+dist/
+*.whl
+*.pyc
+linguini.egg-info/*
+build/
+models/
+logs/
+predictions/

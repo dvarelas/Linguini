@@ -1,0 +1,8 @@
+tensorflow
+pandas
+tweet-preprocessor
+spacy
+pandarallel
+bert-tensorflow
+tensorflow_hub
+PyYAML

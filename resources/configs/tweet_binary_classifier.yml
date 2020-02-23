@@ -1,0 +1,19 @@
+preproc:
+  data_path: data/train.csv
+  target_col: target
+  text_col: text
+  language: en_core_web_sm
+  multiprocessing: True
+fit:
+  model:
+    name: https://tfhub.dev/tensorflow/bert_en_uncased_L-24_H-1024_A-16/1
+    trainable: False
+  optimization:
+    base_lr: 2e-6
+    min_lr: 2e-5
+    max_lr: 2e-4
+    num_epochs: 5
+    batch_size: 32
+predict:
+  model_path: models/bert_model.h5
+  data_path: data/test.csv
