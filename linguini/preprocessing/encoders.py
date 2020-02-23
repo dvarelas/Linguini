@@ -22,7 +22,7 @@ class BertEncoder(SentenceEncoder):
         super().__init__()
 
     def fit(self, sentences):
-        max_len = len(max(sentences.flatten(), key=len)) + 10
+        max_len = len(max(sentences.flatten(), key=len)) + 50
         return max_len
 
     def transform(self, sentences):
@@ -45,4 +45,18 @@ class BertEncoder(SentenceEncoder):
             all_masks.append(pad_masks)
             all_segments.append(segment_ids)
 
-        return np.array(all_tokens), np.array(all_masks), np.array(all_segments)
+        return [np.array(all_tokens), np.array(all_masks), np.array(all_segments)]
+
+
+class ColumnEncoder(object):
+    def __init__(self, col_names):
+        self.col_names = col_names
+
+    def fit(self):
+        return None
+
+    def transform(self, df):
+        result = []
+        for col in self.col_names:
+            result.append(df[col + '_indexed'].values)
+        return result

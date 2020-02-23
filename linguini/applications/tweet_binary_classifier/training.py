@@ -13,7 +13,8 @@ from linguini.config.tweet_binary_classifier_config import config
 def main(configuration):
     p = PandasTweetPreprocessor(
         language=configuration.language,
-        text_col=configuration.text_col)
+        text_col=configuration.text_col,
+        cols_to_index=['keyword'])
 
     train = pd.read_csv(configuration.data_path)
     print(train.shape)
@@ -26,12 +27,14 @@ def main(configuration):
     max_len = enc.fit(elements_df['cleaned_' + configuration.text_col].values)
     train_inputs = enc.transform(elements_df['cleaned_' + configuration.text_col].values)
 
+    train_inputs_side_features = tuple(train_inputs)
+
     model = BertBinaryClassifier(
         configuration.optimization['optimization'],
         enc.bert_layer,
         max_len)
 
-    model.fit(train_inputs, train['target'].values)
+    model.fit(train_inputs_side_features, train['target'].values)
 
     model.save()
 

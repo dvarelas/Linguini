@@ -4,6 +4,7 @@ import pandas as pd
 from pandarallel import pandarallel
 import multiprocessing
 
+from linguini.utils.indexers import ColumnIndexer
 
 class SentencePreprocessor(object):
     def __init__(self):
@@ -81,7 +82,8 @@ class TweetSentencePreprocessor(SentencePreprocessor):
 
 
 class PandasTweetPreprocessor(TweetSentencePreprocessor):
-    def __init__(self, language, text_col):
+    def __init__(self, language, text_col, cols_to_index=None):
+        self.cols_to_index = cols_to_index
         self.language = language
         self.text_col = text_col
         super().__init__(language)
@@ -98,6 +100,14 @@ class PandasTweetPreprocessor(TweetSentencePreprocessor):
         multiple_elements_df = pd.concat([df, elements_df], axis=1)
         return multiple_elements_df
 
+    def index_columns(self, df, col_names):
+        if col_names is not None:
+            indexer = ColumnIndexer(df, col_names)
+            num_elements = indexer.indexers
+            return indexer.transform(df)
+        else:
+            return df
+
     def transform(self, df, multiproc=False):
         elements_df = self.parse_multiple(df, multiproc=False)
         if multiproc:
@@ -105,7 +115,8 @@ class PandasTweetPreprocessor(TweetSentencePreprocessor):
             elements_df['cleaned_' + self.text_col] = elements_df[self.text_col].parallel_apply(self._cleaner)
         else:
             elements_df['cleaned_' + self.text_col] = elements_df[self.text_col].apply(self._cleaner)
-        return elements_df
+        indexed_df = self.index_columns(elements_df, self.cols_to_index)
+        return indexed_df
 
 
 

@@ -12,8 +12,8 @@ fit:
     base_lr: 2e-6
     min_lr: 2e-5
     max_lr: 2e-4
-    num_epochs: 5
-    batch_size: 32
+    num_epochs: 10
+    batch_size: 16
 predict:
   model_path: models/bert_model.h5
   data_path: data/test.csv
