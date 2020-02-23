@@ -15,5 +15,5 @@ fit:
     num_epochs: 10
     batch_size: 16
 predict:
-  model_path: models/bert_model.h5
+  model_path: trained_models/bert_model.h5
   data_path: data/test.csv
