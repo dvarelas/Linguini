@@ -26,7 +26,7 @@ def main(configuration):
         max_len + 1)
 
     predictions = model.score(
-        test_inputs, BASE_PATH + 'models/bert_model.h5')
+        test_inputs, BASE_PATH + 'trained_models/bert_model.h5')
 
     test_data['target'] = predictions.round().astype(int)
     submission = test_data.loc[:, ['id', 'target']]

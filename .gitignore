@@ -6,6 +6,6 @@ dist/
 *.pyc
 linguini.egg-info/*
 build/
-models/
+trained_models/
 logs/
 predictions/
