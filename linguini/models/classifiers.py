@@ -80,7 +80,7 @@ class BertBinaryClassifier(BinaryClassifier):
         return train_history
 
     def save(self):
-        if not os.path.exists(BASE_PATH + 'models/'):
+        if not os.path.exists(BASE_PATH + 'trained_models/'):
             os.makedirs(BASE_PATH + 'trained_models/')
         self.model.save(BASE_PATH + 'trained_models/bert_model.h5')
 
